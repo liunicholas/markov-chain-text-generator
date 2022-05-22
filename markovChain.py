@@ -36,7 +36,7 @@ distinct_words = list(set(corpus_words))
 # create dictionary with word:index
 word_idx_dict = {word: i for i, word in enumerate(distinct_words)}
 
-k = 2 # adjustable num words
+k = 3 # adjustable num words
 
 # groups of three ["w1 w2 w3", "w2 w3 w4" ..., "w n-(k-3) wn-(k-2) wn-(k-1)"]
 sets_of_k_words = [ ' '.join(corpus_words[i:i+k]) for i, _ in enumerate(corpus_words[:-k]) ]
@@ -82,11 +82,16 @@ def stochastic_chain(seed, chain_length=100, seed_length=k):
         raise ValueError(f'wrong number of words, expected {seed_length}')
     sentence = seed
 
-    for _ in range(chain_length): # loop through number of words
+    periods = 0
+    while periods <= 8: # loop through number of words
         sentence+=' '
         next_word = sample_next_word_after_sequence(' '.join(current_words)) # get next word
+        if next_word == ".":
+            periods+=1
+        # print(next_word)
+        # print(periods)
         sentence+=next_word
         current_words = current_words[1:]+[next_word] # update 3 word chain
     return sentence
 # example use
-print(stochastic_chain('STUDENT is'))
+print(stochastic_chain('STUDENT is doing'))
